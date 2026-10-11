@@ -1,0 +1,25 @@
+.DS_Store
+.env
+/.agents/
+/.opencode/
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+
+# Prisma generated client
+/app/generated/
+
+
+# Test coverage
+/coverage/
+
+/app/generated/prisma
+
+/prompts/
+
+skills-lock.json
+
+AGENTS.md
+design.md

@@ -1,0 +1,62 @@
+import { describe, expect, it } from "vitest";
+
+import { createRateLimiter } from "~/lib/rate-limit.server";
+
+describe("createRateLimiter", () => {
+  it("allows up to the limit within a window", () => {
+    const clock = 0;
+    const consume = createRateLimiter({
+      limit: 3,
+      windowMs: 1000,
+      now: () => clock,
+    });
+
+    expect(consume("ip").allowed).toBe(true);
+    expect(consume("ip").allowed).toBe(true);
+    expect(consume("ip").allowed).toBe(true);
+    expect(consume("ip").allowed).toBe(false);
+  });
+
+  it("reports remaining attempts and retry delay", () => {
+    const clock = 0;
+    const consume = createRateLimiter({
+      limit: 2,
+      windowMs: 1000,
+      now: () => clock,
+    });
+
+    const first = consume("ip");
+    expect(first.remaining).toBe(1);
+    consume("ip");
+    const blocked = consume("ip");
+    expect(blocked.allowed).toBe(false);
+    expect(blocked.retryAfterMs).toBe(1000);
+  });
+
+  it("tracks keys independently", () => {
+    const clock = 0;
+    const consume = createRateLimiter({
+      limit: 1,
+      windowMs: 1000,
+      now: () => clock,
+    });
+
+    expect(consume("a").allowed).toBe(true);
+    expect(consume("b").allowed).toBe(true);
+    expect(consume("a").allowed).toBe(false);
+  });
+
+  it("resets after the window elapses", () => {
+    let clock = 0;
+    const consume = createRateLimiter({
+      limit: 1,
+      windowMs: 1000,
+      now: () => clock,
+    });
+
+    expect(consume("ip").allowed).toBe(true);
+    expect(consume("ip").allowed).toBe(false);
+    clock = 1000;
+    expect(consume("ip").allowed).toBe(true);
+  });
+});

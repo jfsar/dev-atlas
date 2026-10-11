@@ -1,0 +1,11 @@
+build
+node_modules
+app/generated
+.react-router
+coverage
+package-lock.json
+prompts
+.agents
+.claude
+.windsurf
+skills-lock.json

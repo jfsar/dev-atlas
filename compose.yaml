@@ -1,0 +1,57 @@
+name: roadmap
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: roadmap
+      POSTGRES_PASSWORD: roadmap
+      POSTGRES_DB: roadmap
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U roadmap -d roadmap"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Apply pending migrations, then exit. Runs before `app`.
+  migrate:
+    profiles: ["app"]
+    build:
+      context: .
+      target: development-dependencies-env
+    command: ["npx", "prisma", "migrate", "deploy"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://roadmap:roadmap@postgres:5432/roadmap?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  # Production-style build of the app for a full-stack local smoke test.
+  # Enable with: npm run docker:app:up (docker compose --profile app up)
+  app:
+    profiles: ["app"]
+    build:
+      context: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://roadmap:roadmap@postgres:5432/roadmap?schema=public
+      BETTER_AUTH_URL: http://localhost:3000
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres-data:
