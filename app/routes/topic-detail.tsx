@@ -11,7 +11,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { formatDifficulty, formatHours, formatMinutes } from "~/lib/format";
-import { breadcrumbJsonLd, buildMeta } from "~/lib/seo";
+import { breadcrumbJsonLd, buildMeta, jsonLdScript } from "~/lib/seo";
 import { getPublishedTopicBySlug } from "~/lib/services/topics.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -71,7 +71,7 @@ export default function TopicDetail({ loaderData }: Route.ComponentProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: jsonLdScript(
             breadcrumbJsonLd([
               { name: "Home", path: "/" },
               { name: topic.title, path: `/topics/${topic.slug}` },

@@ -149,7 +149,7 @@ const detailSelect = {
       estimatedMinutes: true,
       sectionId: true,
       topic: {
-        select: { slug: true, title: true, summary: true },
+        select: { slug: true, title: true, summary: true, status: true },
       },
     },
   },
@@ -190,9 +190,21 @@ export async function getPublishedRoadmapBySlug(slug: string) {
   });
   if (!roadmap) return null;
 
+  const sourceNodes = roadmap.nodes.map((node) => ({
+    ...node,
+    topic:
+      node.topic && node.topic.status === PUBLISHED
+        ? {
+            slug: node.topic.slug,
+            title: node.topic.title,
+            summary: node.topic.summary,
+          }
+        : null,
+  }));
+
   const topicIds = [
     ...new Set(
-      roadmap.nodes
+      sourceNodes
         .map((node) => node.topic?.slug)
         .filter((value): value is string => Boolean(value)),
     ),
@@ -233,6 +245,7 @@ export async function getPublishedRoadmapBySlug(slug: string) {
 
   return {
     ...roadmap,
+    nodes: sourceNodes,
     categories: roadmap.categories.map((entry) => entry.category),
     related,
   };

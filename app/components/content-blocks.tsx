@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { safeExternalHref } from "~/lib/format";
 import { cn } from "~/lib/utils";
 
 export interface TopicBlock {
@@ -175,19 +176,22 @@ function ResourceListBlock({ data }: { data: unknown }) {
   if (items.length === 0) return null;
   return (
     <ul className="space-y-2">
-      {items.map((item) => (
-        <li key={item.url}>
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4 hover:text-primary"
-          >
-            <ExternalLinkIcon className="size-4" aria-hidden />
-            {item.title}
-          </a>
-        </li>
-      ))}
+      {items.map((item) => {
+        const href = safeExternalHref(item.url);
+        return (
+          <li key={item.url}>
+            <a
+              href={href ?? undefined}
+              target={href ? "_blank" : undefined}
+              rel={href ? "noopener noreferrer" : undefined}
+              className="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4 hover:text-primary"
+            >
+              <ExternalLinkIcon className="size-4" aria-hidden />
+              {item.title}
+            </a>
+          </li>
+        );
+      })}
     </ul>
   );
 }

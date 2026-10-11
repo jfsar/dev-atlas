@@ -30,7 +30,7 @@ import {
   type GraphNodeInput,
   type GraphSectionInput,
 } from "~/lib/roadmap-graph";
-import { breadcrumbJsonLd, buildMeta } from "~/lib/seo";
+import { breadcrumbJsonLd, buildMeta, jsonLdScript } from "~/lib/seo";
 import { getPublishedRoadmapBySlug } from "~/lib/services/roadmaps.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -118,7 +118,7 @@ export default function RoadmapDetail({ loaderData }: Route.ComponentProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: jsonLdScript(
             breadcrumbJsonLd([
               { name: "Home", path: "/" },
               { name: "Roadmaps", path: "/roadmaps" },

@@ -10,7 +10,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { formatDifficulty, formatContentPointKind } from "~/lib/format";
-import { breadcrumbJsonLd, buildMeta } from "~/lib/seo";
+import { breadcrumbJsonLd, buildMeta, jsonLdScript } from "~/lib/seo";
 import { getPublishedDomainBySlug } from "~/lib/services/domains.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -73,7 +73,7 @@ export default function BusinessDomainDetail({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: jsonLdScript(
             breadcrumbJsonLd([
               { name: "Home", path: "/" },
               { name: "Business domains", path: "/business-domains" },

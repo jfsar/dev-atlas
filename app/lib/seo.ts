@@ -62,6 +62,20 @@ export function buildMeta({
   return meta;
 }
 
+/**
+ * Serialize structured data for embedding in a `<script type="application/ld+json">`.
+ * Escapes the characters that can prematurely close the script element so that
+ * even admin-authored titles can never break out of the tag (stored XSS).
+ */
+export function jsonLdScript(json: unknown): string {
+  return JSON.stringify(json)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}
+
 export interface Crumb {
   name: string;
   path: string;

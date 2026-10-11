@@ -74,3 +74,21 @@ export function pluralize(
 ): string {
   return count === 1 ? singular : (plural ?? `${singular}s`);
 }
+
+/**
+ * Returns the URL only when it is an absolute http(s) URL, otherwise `null`.
+ * Defense-in-depth against `javascript:`/`data:` URLs reaching an anchor href.
+ */
+export function safeExternalHref(
+  url: string | null | undefined,
+): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:"
+      ? url
+      : null;
+  } catch {
+    return null;
+  }
+}

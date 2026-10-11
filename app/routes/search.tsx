@@ -8,6 +8,7 @@ import { EmptyState } from "~/components/states";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { buildSearchHref, isSearchType } from "~/lib/search";
+import { getClientIp, searchRateLimiter } from "~/lib/rate-limit.server";
 import { buildMeta } from "~/lib/seo";
 import {
   searchPublicContent,
@@ -15,6 +16,13 @@ import {
 } from "~/lib/services/search.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
+  if (!searchRateLimiter(getClientIp(request)).allowed) {
+    throw new Response("Too Many Requests", {
+      status: 429,
+      statusText: "Too Many Requests",
+    });
+  }
+
   const url = new URL(request.url);
   const query = (url.searchParams.get("q") ?? "").trim();
   const typeParam = url.searchParams.get("type");

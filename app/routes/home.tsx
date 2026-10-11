@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { buildMeta, organizationJsonLd } from "~/lib/seo";
+import { buildMeta, jsonLdScript, organizationJsonLd } from "~/lib/seo";
 import { getCatalogStats } from "~/lib/services/catalog.server";
 import {
   getFeaturedRoadmaps,
@@ -83,7 +83,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationJsonLd()),
+          __html: jsonLdScript(organizationJsonLd()),
         }}
       />
       <section className="relative overflow-hidden border-b border-foreground/15 drafting-grid-lg">

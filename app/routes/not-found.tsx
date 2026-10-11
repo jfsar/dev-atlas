@@ -1,9 +1,13 @@
-import { Link } from "react-router";
+import { data, Link } from "react-router";
 
 import type { Route } from "./+types/not-found";
 import { NotFoundState } from "~/components/states";
 import { Button } from "~/components/ui/button";
 import { buildMeta } from "~/lib/seo";
+
+export function loader({}: Route.LoaderArgs) {
+  return data(null, { status: 404, statusText: "Not Found" });
+}
 
 export function meta({}: Route.MetaArgs) {
   return buildMeta({

@@ -47,6 +47,11 @@ function metaFromParts(parts: (string | null | undefined)[]): string | null {
   return joined.length > 0 ? joined : null;
 }
 
+/** Escapes LIKE/ILIKE wildcards so user input matches literally (Postgres `\` escape). */
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, (char) => `\\${char}`);
+}
+
 interface TypeResults {
   items: SearchResultItem[];
   total: number;
@@ -59,13 +64,14 @@ async function runSearchType(
   skip: number,
   take: number,
 ): Promise<TypeResults> {
+  const pattern = escapeLikePattern(query);
   switch (type) {
     case "roadmap": {
       const where = {
         status: PUBLISHED,
         OR: [
-          { title: { contains: query, ...insensitivity } },
-          { summary: { contains: query, ...insensitivity } },
+          { title: { contains: pattern, ...insensitivity } },
+          { summary: { contains: pattern, ...insensitivity } },
         ],
       };
       const [rows, total] = await Promise.all([
@@ -103,8 +109,8 @@ async function runSearchType(
       const where = {
         status: PUBLISHED,
         OR: [
-          { title: { contains: query, ...insensitivity } },
-          { summary: { contains: query, ...insensitivity } },
+          { title: { contains: pattern, ...insensitivity } },
+          { summary: { contains: pattern, ...insensitivity } },
         ],
       };
       const [rows, total] = await Promise.all([
@@ -142,9 +148,9 @@ async function runSearchType(
       const where = {
         status: PUBLISHED,
         OR: [
-          { title: { contains: query, ...insensitivity } },
-          { summary: { contains: query, ...insensitivity } },
-          { definition: { contains: query, ...insensitivity } },
+          { title: { contains: pattern, ...insensitivity } },
+          { summary: { contains: pattern, ...insensitivity } },
+          { definition: { contains: pattern, ...insensitivity } },
         ],
       };
       const [rows, total] = await Promise.all([
@@ -171,9 +177,9 @@ async function runSearchType(
       const where = {
         status: PUBLISHED,
         OR: [
-          { title: { contains: query, ...insensitivity } },
-          { summary: { contains: query, ...insensitivity } },
-          { scenario: { contains: query, ...insensitivity } },
+          { title: { contains: pattern, ...insensitivity } },
+          { summary: { contains: pattern, ...insensitivity } },
+          { scenario: { contains: pattern, ...insensitivity } },
         ],
       };
       const [rows, total] = await Promise.all([
@@ -211,8 +217,8 @@ async function runSearchType(
       const where = {
         status: PUBLISHED,
         OR: [
-          { title: { contains: query, ...insensitivity } },
-          { summary: { contains: query, ...insensitivity } },
+          { title: { contains: pattern, ...insensitivity } },
+          { summary: { contains: pattern, ...insensitivity } },
         ],
       };
       const [rows, total] = await Promise.all([

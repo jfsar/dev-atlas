@@ -67,3 +67,9 @@ export const loginRateLimiter = createRateLimiter({
   limit: 10,
   windowMs: 5 * 60 * 1000,
 });
+
+/** Shared limiter for the public search route. */
+export const searchRateLimiter = createRateLimiter({
+  limit: 60,
+  windowMs: 60 * 1000,
+});

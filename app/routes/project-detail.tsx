@@ -11,7 +11,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { formatDifficulty, formatHours, pluralize } from "~/lib/format";
-import { breadcrumbJsonLd, buildMeta } from "~/lib/seo";
+import { breadcrumbJsonLd, buildMeta, jsonLdScript } from "~/lib/seo";
 import { getPublishedProjectBySlug } from "~/lib/services/projects.server";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -87,7 +87,7 @@ export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: jsonLdScript(
             breadcrumbJsonLd([
               { name: "Home", path: "/" },
               { name: "Projects", path: "/projects" },
