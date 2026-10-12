@@ -91,7 +91,7 @@ export function ErrorState({
       <Alert variant="destructive">
         <AlertTriangleIcon aria-hidden />
         <AlertTitle>{title}</AlertTitle>
-        {description ? (
+        {description || action ? (
           <AlertDescription>
             {description}
             {action ? <div className="mt-3">{action}</div> : null}

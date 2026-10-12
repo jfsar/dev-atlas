@@ -10,12 +10,13 @@
  * DRAFTING ROOM — CASA LUMEN · A-101
  * Industrial/Technical "drafting paper" design system. Light-only.
  *
- * paper   #f3ecd9  (surface)
- * paper2  #ece3cb  (muted surface)
- * ink     #2b2620  (text / primary)
- * faint   #8d8264  (muted text, borders, rings)
- * accent  #b3412b  (destructive / highlight)
- * grid    rgba(93,118,146,.16)  (blueprint lines)
+ * paper     #f3ecd9  (surface)
+ * paper2    #ece3cb  (muted surface)
+ * ink       #2b2620  (text / primary)
+ * faint     #8d8264  (borders, rings)
+ * faint-ink #6b6250  (muted text, AA on paper/paper2)
+ * rust      #b3412b  (destructive / highlight)
+ * grid      rgba(93,118,146,.16)  (blueprint lines)
  */
 :root {
   color-scheme: light;
@@ -25,7 +26,8 @@
   --ink: #2b2620;
   --deep-ink: #221d15;
   --faint: #8d8264;
-  --accent: #b3412b;
+  --faint-ink: #6b6250;
+  --rust: #b3412b;
   --grid: rgba(93, 118, 146, 0.16);
 
   --shadow-neu:
@@ -50,10 +52,10 @@
   --secondary: var(--paper2);
   --secondary-foreground: var(--ink);
   --muted: var(--paper2);
-  --muted-foreground: var(--faint);
+  --muted-foreground: var(--faint-ink);
   --accent: var(--paper2);
   --accent-foreground: var(--ink);
-  --destructive: var(--accent);
+  --destructive: var(--rust);
   --border: color-mix(in oklab, var(--ink) 16%, var(--paper));
   --input: color-mix(in oklab, var(--ink) 22%, var(--paper));
   --ring: var(--faint);
@@ -83,7 +85,7 @@
   --color-ink: var(--ink);
   --color-deep-ink: var(--deep-ink);
   --color-faint: var(--faint);
-  --color-rust: var(--accent);
+  --color-rust: var(--rust);
   --color-blueprint: #5d7692;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

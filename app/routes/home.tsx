@@ -124,7 +124,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               <span className="absolute -right-px -bottom-px size-8 rounded-br-2xl border-r-2 border-b-2 border-foreground" />
               <div className="flex h-full flex-col justify-between">
                 <div className="flex items-center justify-between text-[0.65rem] tracking-[0.2em] text-muted-foreground uppercase">
-                  <span>Casa Lumen</span>
+                  <span>DevAtlas</span>
                   <span>A-101</span>
                 </div>
                 <div className="space-y-3">
