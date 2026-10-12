@@ -244,12 +244,12 @@ export default function RoadmapDetail({ loaderData }: Route.ComponentProps) {
               Interactive roadmap
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Drag to pan, scroll to zoom, and select a node to open its topic.
-              Prefer a list?{" "}
+              Drag to pan, scroll to zoom, and hover a node to trace its
+              prerequisites and next steps. Select a node to open its topic, or{" "}
               <a href="#outline" className="underline underline-offset-4">
-                Jump to the outline
-              </a>
-              .
+                jump to the outline
+              </a>{" "}
+              for a list view.
             </p>
           </div>
           {relationshipTypes.size > 0 ? (
@@ -260,7 +260,11 @@ export default function RoadmapDetail({ loaderData }: Route.ComponentProps) {
               {RELATIONSHIP_ORDER.filter((type) =>
                 relationshipTypes.has(type),
               ).map((type) => (
-                <li key={type} className="inline-flex items-center gap-1.5">
+                <li
+                  key={type}
+                  className="inline-flex items-center gap-1.5"
+                  title={relationshipMeta[type].description}
+                >
                   <span
                     aria-hidden
                     className="h-0.5 w-4 rounded"
