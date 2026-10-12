@@ -22,6 +22,26 @@ describe("parseServerEnv", () => {
     expect(BETTER_AUTH_URL).toBeDefined();
   });
 
+  it("accepts optional Neon pooled/unpooled overrides", () => {
+    const parsed = parseServerEnv({
+      ...valid,
+      NEON_DB_POOLED_URL: "postgresql://u:p@ep-x-pooler.neon.tech/db",
+      NEON_DB_UNPOOLED_URL: "postgresql://u:p@ep-x.neon.tech/db",
+    });
+    expect(parsed.NEON_DB_POOLED_URL).toBe(
+      "postgresql://u:p@ep-x-pooler.neon.tech/db",
+    );
+    expect(parsed.NEON_DB_UNPOOLED_URL).toBe(
+      "postgresql://u:p@ep-x.neon.tech/db",
+    );
+  });
+
+  it("rejects a malformed Neon override", () => {
+    expect(() =>
+      parseServerEnv({ ...valid, NEON_DB_POOLED_URL: "not-a-url" }),
+    ).toThrow(/NEON_DB_POOLED_URL/);
+  });
+
   it("throws a helpful message when required values are missing", () => {
     expect(() => parseServerEnv({})).toThrow(/DATABASE_URL/);
     expect(() => parseServerEnv({})).toThrow(/BETTER_AUTH_SECRET/);

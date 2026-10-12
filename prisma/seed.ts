@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 
 import { hashPassword } from "better-auth/crypto";
 
-import { prisma } from "../app/lib/prisma";
+import { createPrismaClient } from "../app/lib/prisma-client";
 import { computeLayout, statusMeta } from "./seed/helpers";
 import { businessDomains } from "./seed/data/business-domains";
 import { categories } from "./seed/data/categories";
@@ -12,6 +12,19 @@ import { projects } from "./seed/data/projects";
 import { resources } from "./seed/data/resources";
 import { roadmaps } from "./seed/data/roadmaps";
 import { topics } from "./seed/data/topics";
+
+// Seeding runs against the direct (unpooled) connection. Neon's pooler is for
+// short-lived app traffic; bulk writes and DDL belong on the direct endpoint.
+const connectionString =
+  process.env.NEON_DB_UNPOOLED_URL ?? process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error(
+    "NEON_DB_UNPOOLED_URL is not set (and DATABASE_URL is not set either)",
+  );
+}
+
+const prisma = createPrismaClient(connectionString);
 
 async function seedCategories() {
   for (const category of categories) {

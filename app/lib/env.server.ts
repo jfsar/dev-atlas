@@ -7,6 +7,10 @@ import { z } from "zod";
  */
 export const serverEnvSchema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required."),
+  // Optional Neon overrides: pooled for app traffic (fetch/insert), unpooled
+  // for seeding and migrations. When unset, DATABASE_URL is used.
+  NEON_DB_POOLED_URL: z.url().optional(),
+  NEON_DB_UNPOOLED_URL: z.url().optional(),
   BETTER_AUTH_SECRET: z
     .string()
     .min(16, "BETTER_AUTH_SECRET must be at least 16 characters."),

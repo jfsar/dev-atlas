@@ -28,6 +28,10 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgresql://roadmap:roadmap@postgres:5432/roadmap?schema=public
+      # Blank out the Neon overrides from .env so this service stays on the
+      # local postgres container (empty strings are falsy).
+      NEON_DB_POOLED_URL: ""
+      NEON_DB_UNPOOLED_URL: ""
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,6 +47,9 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgresql://roadmap:roadmap@postgres:5432/roadmap?schema=public
+      # Keep the containerized app on the local postgres service.
+      NEON_DB_POOLED_URL: ""
+      NEON_DB_UNPOOLED_URL: ""
       BETTER_AUTH_URL: http://localhost:3000
       PORT: "3000"
     ports:

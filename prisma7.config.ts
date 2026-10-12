@@ -9,7 +9,9 @@ export default defineConfig({
     path: "prisma/migrations",
     seed: "tsx prisma/seed.ts",
   },
+  // Migrations run over the direct (unpooled) connection: Neon's pooler does
+  // not support the advisory locks Prisma uses for migrations.
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: process.env["NEON_DB_UNPOOLED_URL"] ?? process.env["DATABASE_URL"],
   },
 });
