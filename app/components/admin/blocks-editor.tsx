@@ -262,7 +262,7 @@ export function TopicBlocksEditor({
           </CardFooter>
         </Card>
       ))}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button type="button" variant="outline" onClick={() => add("MARKDOWN")}>
           <PlusIcon className="mr-2 size-4" /> Add markdown
         </Button>

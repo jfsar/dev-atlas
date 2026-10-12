@@ -57,7 +57,7 @@ export function TopicForm({
 }: TopicFormProps) {
   return (
     <Form method="post" className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <section className="space-y-4 rounded-xl border bg-card p-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2 sm:max-w-xl">
@@ -131,7 +131,7 @@ export function TopicForm({
         </section>
       </div>
 
-      <aside className="space-y-6">
+      <aside className="min-w-0 space-y-6">
         <section className="space-y-4 rounded-xl border bg-card p-4">
           <h2 className="font-heading text-sm font-medium tracking-wide text-muted-foreground uppercase">
             Taxonomy &amp; relations

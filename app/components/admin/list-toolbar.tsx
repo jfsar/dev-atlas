@@ -38,7 +38,7 @@ export function ListToolbar({
         action={action}
         className="flex flex-wrap items-end gap-2"
       >
-        <div className="min-w-56 space-y-2">
+        <div className="min-w-56">
           <Label htmlFor="q" className="sr-only">
             Search
           </Label>
@@ -51,7 +51,7 @@ export function ListToolbar({
           />
         </div>
 
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="status" className="sr-only">
             Status
           </Label>
