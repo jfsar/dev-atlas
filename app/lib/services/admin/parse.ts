@@ -43,6 +43,7 @@ export function parseRoadmapForm(form: FormData): RoadmapParseResult {
     featured: formBoolean(form, "featured"),
     order: formNumber(form, "order") ?? 0,
     categorySlugs: formTextArray(form, "categorySlugs"),
+    relatedTopicSlugs: formTextArray(form, "relatedTopicSlugs"),
     seoTitle: formOptionalText(form, "seoTitle"),
     seoDescription: formOptionalText(form, "seoDescription"),
     seoImage: formOptionalText(form, "seoImage"),

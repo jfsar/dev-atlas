@@ -59,4 +59,35 @@ describe("createRateLimiter", () => {
     clock = 1000;
     expect(consume("ip").allowed).toBe(true);
   });
+
+  it("sweeps expired buckets after the window elapses", () => {
+    let clock = 0;
+    const consume = createRateLimiter({
+      limit: 1,
+      windowMs: 1000,
+      now: () => clock,
+    });
+
+    consume("a");
+    consume("b");
+    consume("c");
+    expect(consume.size).toBe(3);
+
+    clock = 1000;
+    consume("d");
+    expect(consume.size).toBe(1);
+  });
+
+  it("bounds the number of tracked keys", () => {
+    const consume = createRateLimiter({
+      limit: 5,
+      windowMs: 1000,
+      now: () => 0,
+      maxKeys: 100,
+    });
+
+    for (let index = 0; index < 1000; index++) consume(`ip-${index}`);
+
+    expect(consume.size).toBeLessThanOrEqual(100);
+  });
 });

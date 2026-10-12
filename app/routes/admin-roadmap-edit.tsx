@@ -25,12 +25,14 @@ import {
   updateRoadmapSections,
 } from "~/lib/services/admin/roadmaps.server";
 import { formDataToValues } from "~/lib/services/admin/shared";
+import { listTopicOptions } from "~/lib/services/admin/topics.server";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   await requireAdmin(request);
-  const [roadmap, categories] = await Promise.all([
+  const [roadmap, categories, topics] = await Promise.all([
     getAdminRoadmap(params.id),
     listAdminCategories(),
+    listTopicOptions(),
   ]);
   if (!roadmap) {
     throw new Response("Roadmap not found", { status: 404 });
@@ -38,6 +40,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return {
     roadmap,
     categories: categories.map((c) => ({ slug: c.slug, name: c.name })),
+    topics: topics.map((t) => ({ slug: t.slug, title: t.title })),
   };
 }
 
@@ -116,7 +119,7 @@ export default function AdminRoadmapEdit({
   loaderData,
   actionData,
 }: Route.ComponentProps) {
-  const { roadmap, categories } = loaderData;
+  const { roadmap, categories, topics } = loaderData;
   const sectionsInitial = sectionsFromValues(
     actionData?.values?.sections,
     roadmap.sections.map((section) => ({
@@ -177,6 +180,7 @@ export default function AdminRoadmapEdit({
 
       <RoadmapForm
         categories={categories}
+        topics={topics}
         defaults={{
           slug: roadmap.slug,
           title: roadmap.title,
@@ -196,6 +200,7 @@ export default function AdminRoadmapEdit({
           seoDescription: roadmap.seoDescription ?? "",
           seoImage: roadmap.seoImage ?? "",
           categorySlugs: roadmap.categorySlugs,
+          relatedTopicSlugs: roadmap.relatedTopicSlugs,
         }}
         errors={actionData?.fieldErrors}
         values={actionData?.values}

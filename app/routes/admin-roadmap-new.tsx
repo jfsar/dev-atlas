@@ -11,12 +11,17 @@ import { listAdminCategories } from "~/lib/services/admin/categories.server";
 import { parseRoadmapForm } from "~/lib/services/admin/parse";
 import { createRoadmap } from "~/lib/services/admin/roadmaps.server";
 import { formDataToValues } from "~/lib/services/admin/shared";
+import { listTopicOptions } from "~/lib/services/admin/topics.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireAdmin(request);
-  const categories = await listAdminCategories();
+  const [categories, topics] = await Promise.all([
+    listAdminCategories(),
+    listTopicOptions(),
+  ]);
   return {
     categories: categories.map((c) => ({ slug: c.slug, name: c.name })),
+    topics: topics.map((t) => ({ slug: t.slug, title: t.title })),
   };
 }
 
@@ -45,7 +50,7 @@ export default function AdminRoadmapNew({
   loaderData,
   actionData,
 }: Route.ComponentProps) {
-  const { categories } = loaderData;
+  const { categories, topics } = loaderData;
 
   return (
     <div className="space-y-8">
@@ -67,6 +72,7 @@ export default function AdminRoadmapNew({
 
       <RoadmapForm
         categories={categories}
+        topics={topics}
         defaults={{
           slug: "",
           title: "",
@@ -83,6 +89,7 @@ export default function AdminRoadmapNew({
           seoDescription: "",
           seoImage: "",
           categorySlugs: [],
+          relatedTopicSlugs: [],
         }}
         errors={actionData?.fieldErrors}
         values={actionData?.values}

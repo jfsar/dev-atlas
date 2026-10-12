@@ -115,4 +115,28 @@ describe("getPublishedRoadmapBySlug", () => {
     expect(args.where.status).toBe("PUBLISHED");
     expect(args.where.topics.some.slug.in).toEqual(["react"]);
   });
+
+  it("returns curated related topics and only queries published ones", async () => {
+    prismaMock.roadmap.findFirst.mockResolvedValue({
+      slug: "frontend",
+      categories: [],
+      nodes: [],
+      edges: [],
+      relatedTopics: [
+        {
+          slug: "node",
+          title: "Node.js",
+          summary: "Server runtime",
+          difficulty: "INTERMEDIATE",
+        },
+      ],
+    });
+
+    const result = await getPublishedRoadmapBySlug("frontend");
+
+    expect(result!.related.topics).toHaveLength(1);
+    expect(result!.related.topics[0].slug).toBe("node");
+    const args = prismaMock.roadmap.findFirst.mock.calls[0][0];
+    expect(args.select.relatedTopics.where.status).toBe("PUBLISHED");
+  });
 });

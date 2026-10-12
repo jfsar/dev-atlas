@@ -4,7 +4,7 @@ import rehypeSanitize from "rehype-sanitize";
 import { cn } from "~/lib/utils";
 
 const components: Components = {
-  a({ href, children, ...props }) {
+  a({ node: _node, href, children, ...props }) {
     const isExternal = Boolean(href && /^https?:\/\//.test(href));
     return (
       <a

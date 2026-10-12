@@ -176,6 +176,7 @@ model Roadmap {
   nodes             RoadmapNode[]
   edges             RoadmapEdge[]
   categories        RoadmapCategory[]
+  relatedTopics     Topic[]           @relation("RoadmapRelatedTopics")
 
   @@index([status, order])
   @@index([title(ops: raw("gin_trgm_ops"))], name: "Roadmap_title_trgm_idx", type: Gin)
@@ -268,6 +269,7 @@ model Topic {
   domains          BusinessDomain[]    @relation("TopicDomains")
   relatedTopics    Topic[]             @relation("TopicRelated")
   relatedFrom      Topic[]             @relation("TopicRelated")
+  relatedRoadmaps  Roadmap[]           @relation("RoadmapRelatedTopics")
   categories       TopicCategory[]
 
   @@index([status])

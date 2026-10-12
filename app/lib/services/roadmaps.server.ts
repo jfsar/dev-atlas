@@ -162,6 +162,11 @@ const detailSelect = {
       relationship: true,
     },
   },
+  relatedTopics: {
+    where: { status: PUBLISHED },
+    orderBy: { title: "asc" },
+    select: { slug: true, title: true, summary: true, difficulty: true },
+  },
 } as const;
 
 export type RoadmapDetail = NonNullable<
@@ -169,6 +174,12 @@ export type RoadmapDetail = NonNullable<
 >;
 
 export interface RelatedRoadmapContent {
+  topics: {
+    slug: string;
+    title: string;
+    summary: string;
+    difficulty: Difficulty | null;
+  }[];
   projects: {
     slug: string;
     title: string;
@@ -210,7 +221,11 @@ export async function getPublishedRoadmapBySlug(slug: string) {
     ),
   ];
 
-  const related: RelatedRoadmapContent = { projects: [], domains: [] };
+  const related: RelatedRoadmapContent = {
+    topics: roadmap.relatedTopics,
+    projects: [],
+    domains: [],
+  };
 
   if (topicIds.length > 0) {
     const [projects, domains] = await Promise.all([
@@ -243,8 +258,10 @@ export async function getPublishedRoadmapBySlug(slug: string) {
     related.domains = domains;
   }
 
+  const { relatedTopics: _relatedTopics, ...roadmapRest } = roadmap;
+
   return {
-    ...roadmap,
+    ...roadmapRest,
     nodes: sourceNodes,
     categories: roadmap.categories.map((entry) => entry.category),
     related,

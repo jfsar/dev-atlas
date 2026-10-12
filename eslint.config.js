@@ -43,6 +43,14 @@ export default tseslint.config(
       ...reactHooks.configs.flat.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
       "no-empty-pattern": ["error", { allowObjectPatternsAsParameters: true }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
     },
   },
 );

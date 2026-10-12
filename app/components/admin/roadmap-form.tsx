@@ -2,6 +2,7 @@ import { Form } from "react-router";
 
 import { CategoryPicker } from "~/components/admin/category-picker";
 import { FieldError } from "~/components/admin/field-error";
+import { RelatedTopicsPicker } from "~/components/admin/related-topics-picker";
 import {
   SectionsEditor,
   type SectionFormValue,
@@ -40,10 +41,12 @@ export interface RoadmapFormDefaults {
   seoDescription: string;
   seoImage: string;
   categorySlugs: string[];
+  relatedTopicSlugs: string[];
 }
 
 export function RoadmapForm({
   categories,
+  topics,
   defaults,
   errors,
   values,
@@ -51,6 +54,7 @@ export function RoadmapForm({
   sections,
 }: {
   categories: { slug: string; name: string }[];
+  topics: { slug: string; title: string }[];
   defaults: RoadmapFormDefaults;
   errors?: Record<string, string[]>;
   values?: Record<string, string | string[]>;
@@ -198,6 +202,22 @@ export function RoadmapForm({
             categories={categories}
             selected={valuesOf(values, "categorySlugs", defaults.categorySlugs)}
             error={errors?.categorySlugs}
+          />
+        </div>
+
+        <div className="space-y-2 sm:col-span-2">
+          <Label>Related topics</Label>
+          <p className="text-sm text-muted-foreground">
+            Curated topics shown under “Related content” on the roadmap page.
+          </p>
+          <RelatedTopicsPicker
+            topics={topics}
+            selected={valuesOf(
+              values,
+              "relatedTopicSlugs",
+              defaults.relatedTopicSlugs,
+            )}
+            error={errors?.relatedTopicSlugs}
           />
         </div>
       </div>

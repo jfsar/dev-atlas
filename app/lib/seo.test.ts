@@ -48,7 +48,34 @@ describe("buildMeta", () => {
     });
     expect(meta).toContainEqual({
       name: "twitter:card",
-      content: "summary",
+      content: "summary_large_image",
+    });
+    expect(meta).toContainEqual({
+      name: "twitter:site",
+      content: siteConfig.twitter,
+    });
+  });
+
+  it("falls back to the shared og image", () => {
+    expect(meta).toContainEqual({
+      property: "og:image",
+      content: `${siteConfig.url}${siteConfig.ogImage}`,
+    });
+    expect(meta).toContainEqual({
+      name: "twitter:image",
+      content: `${siteConfig.url}${siteConfig.ogImage}`,
+    });
+  });
+
+  it("uses a per-page image when provided", () => {
+    const withImage = buildMeta({
+      title: "Roadmaps",
+      path: "/roadmaps",
+      image: "/custom.png",
+    }) as Array<Record<string, unknown>>;
+    expect(withImage).toContainEqual({
+      property: "og:image",
+      content: `${siteConfig.url}/custom.png`,
     });
   });
 

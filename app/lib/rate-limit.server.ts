@@ -8,6 +8,14 @@ export interface RateLimiterOptions {
   limit: number;
   windowMs: number;
   now?: () => number;
+  /** Hard cap on tracked keys; oldest entries are evicted past this limit. */
+  maxKeys?: number;
+}
+
+export interface RateLimiter {
+  (key: string): RateLimitResult;
+  /** Number of keys currently tracked (exposed for tests/observability). */
+  readonly size: number;
 }
 
 interface Bucket {
@@ -18,19 +26,46 @@ interface Bucket {
 /**
  * Minimal fixed-window in-memory rate limiter. Good enough to throttle admin
  * login attempts on a single Node instance without extra infrastructure.
+ *
+ * Expired buckets are swept periodically and the map is capped by `maxKeys`, so
+ * the limiter cannot grow without bound under high-cardinality public traffic.
  */
 export function createRateLimiter({
   limit,
   windowMs,
   now = Date.now,
-}: RateLimiterOptions) {
+  maxKeys = 10_000,
+}: RateLimiterOptions): RateLimiter {
   const buckets = new Map<string, Bucket>();
+  let lastSweep = now();
 
-  return function consume(key: string): RateLimitResult {
+  function sweep(current: number): void {
+    for (const [key, bucket] of buckets) {
+      if (bucket.resetAt <= current) buckets.delete(key);
+    }
+    lastSweep = current;
+  }
+
+  function evictOldest(): void {
+    const overflow = buckets.size - maxKeys + 1;
+    let removed = 0;
+    for (const key of buckets.keys()) {
+      buckets.delete(key);
+      if (++removed >= overflow) break;
+    }
+  }
+
+  const consume = (key: string): RateLimitResult => {
     const current = now();
+    if (current - lastSweep >= windowMs) sweep(current);
+
     const bucket = buckets.get(key);
 
     if (!bucket || bucket.resetAt <= current) {
+      if (buckets.size >= maxKeys) {
+        sweep(current);
+        if (buckets.size >= maxKeys) evictOldest();
+      }
       buckets.set(key, { count: 1, resetAt: current + windowMs });
       return { allowed: true, remaining: limit - 1, retryAfterMs: 0 };
     }
@@ -50,6 +85,9 @@ export function createRateLimiter({
       retryAfterMs: 0,
     };
   };
+
+  Object.defineProperty(consume, "size", { get: () => buckets.size });
+  return consume as RateLimiter;
 }
 
 /** Best-effort client IP extraction from common proxy headers. */

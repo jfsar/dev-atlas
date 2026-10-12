@@ -4,6 +4,7 @@ import { FolderKanbanIcon } from "lucide-react";
 import type { Route } from "./+types/projects";
 import { CategoryFilter } from "~/components/category-filter";
 import { ProjectCard } from "~/components/project-card";
+import { RouteErrorBoundary } from "~/components/route-error-boundary";
 import { EmptyState } from "~/components/states";
 import { Button } from "~/components/ui/button";
 import { buildMeta } from "~/lib/seo";
@@ -88,5 +89,16 @@ export default function ProjectsIndex({ loaderData }: Route.ComponentProps) {
         )}
       </div>
     </div>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <RouteErrorBoundary
+      title="Could not load projects"
+      description="Something went wrong while loading projects. Please try again."
+      actionLabel="Retry"
+      actionTo="/projects"
+    />
   );
 }

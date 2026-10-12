@@ -4,6 +4,7 @@ import { Building2Icon } from "lucide-react";
 import type { Route } from "./+types/business-domains";
 import { CategoryFilter } from "~/components/category-filter";
 import { DomainCard } from "~/components/domain-card";
+import { RouteErrorBoundary } from "~/components/route-error-boundary";
 import { EmptyState } from "~/components/states";
 import { Button } from "~/components/ui/button";
 import { buildMeta } from "~/lib/seo";
@@ -90,5 +91,16 @@ export default function BusinessDomainsIndex({
         )}
       </div>
     </div>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <RouteErrorBoundary
+      title="Could not load business domains"
+      description="Something went wrong while loading business domains. Please try again."
+      actionLabel="Retry"
+      actionTo="/business-domains"
+    />
   );
 }

@@ -26,6 +26,7 @@ const validRoadmap = {
   difficulty: "BEGINNER",
   estimatedHours: "40",
   categorySlugs: ["frontend", "frontend", "javascript"],
+  relatedTopicSlugs: ["react", "react", "node"],
 };
 
 describe("parseRoadmapForm", () => {
@@ -37,7 +38,16 @@ describe("parseRoadmapForm", () => {
       expect(result.data.difficulty).toBe("BEGINNER");
       expect(result.data.estimatedHours).toBe(40);
       expect(result.data.categorySlugs).toEqual(["frontend", "javascript"]);
+      expect(result.data.relatedTopicSlugs).toEqual(["react", "node"]);
     }
+  });
+
+  it("defaults related topic slugs to an empty list", () => {
+    const result = parseRoadmapForm(
+      formFrom({ ...validRoadmap, relatedTopicSlugs: [] }),
+    );
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.relatedTopicSlugs).toEqual([]);
   });
 
   it("reports field errors for invalid input", () => {

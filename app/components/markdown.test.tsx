@@ -31,4 +31,10 @@ describe("Markdown", () => {
     const link = screen.getByRole("link", { name: "Home" });
     expect(link).not.toHaveAttribute("target");
   });
+
+  it("does not leak react-markdown's node prop onto the anchor", () => {
+    render(<Markdown content={"[Docs](https://example.com)"} />);
+    const link = screen.getByRole("link", { name: "Docs" });
+    expect(link).not.toHaveAttribute("node");
+  });
 });

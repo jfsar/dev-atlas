@@ -36,7 +36,7 @@ export function buildMeta({
 }: MetaInput): MetaDescriptor[] {
   const fullTitle = formatPageTitle(title);
   const url = absoluteUrl(path);
-  const imageUrl = image ? absoluteUrl(image) : undefined;
+  const imageUrl = absoluteUrl(image ?? siteConfig.ogImage);
 
   const meta: MetaDescriptor[] = [
     { title: fullTitle },
@@ -48,15 +48,14 @@ export function buildMeta({
     { property: "og:description", content: description },
     { property: "og:url", content: url },
     { property: "og:locale", content: siteConfig.locale },
-    {
-      name: "twitter:card",
-      content: imageUrl ? "summary_large_image" : "summary",
-    },
+    { property: "og:image", content: imageUrl },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:site", content: siteConfig.twitter },
     { name: "twitter:title", content: fullTitle },
     { name: "twitter:description", content: description },
+    { name: "twitter:image", content: imageUrl },
   ];
 
-  if (imageUrl) meta.push({ property: "og:image", content: imageUrl });
   if (noIndex) meta.push({ name: "robots", content: "noindex,nofollow" });
 
   return meta;

@@ -95,6 +95,7 @@ export interface AdminRoadmapDetail extends RoadmapInput {
   nodeCount: number;
   edgeCount: number;
   categorySlugs: string[];
+  relatedTopicSlugs: string[];
   sections: { id: string; title: string; color: string | null }[];
 }
 
@@ -121,6 +122,7 @@ export async function getAdminRoadmap(
       seoDescription: true,
       seoImage: true,
       categories: { select: { category: { select: { slug: true } } } },
+      relatedTopics: { select: { slug: true } },
       sections: {
         orderBy: { order: "asc" },
         select: { id: true, title: true, color: true },
@@ -147,6 +149,7 @@ export async function getAdminRoadmap(
     seoDescription: row.seoDescription ?? undefined,
     seoImage: row.seoImage ?? undefined,
     categorySlugs: row.categories.map((entry) => entry.category.slug),
+    relatedTopicSlugs: row.relatedTopics.map((entry) => entry.slug),
     sections: row.sections,
     nodeCount: row._count.nodes,
     edgeCount: row._count.edges,
@@ -184,6 +187,9 @@ export async function createRoadmap(
       data: {
         ...roadmapScalars(input),
         categories: { create: categoryConnectPayload(input.categorySlugs) },
+        relatedTopics: {
+          connect: input.relatedTopicSlugs.map((slug) => ({ slug })),
+        },
       },
       select: { id: true },
     });
@@ -211,6 +217,9 @@ export async function updateRoadmap(
         categories: {
           deleteMany: {},
           create: categoryConnectPayload(input.categorySlugs),
+        },
+        relatedTopics: {
+          set: input.relatedTopicSlugs.map((slug) => ({ slug })),
         },
       },
     });

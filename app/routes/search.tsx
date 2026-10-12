@@ -4,9 +4,11 @@ import { ArrowRightIcon, ExternalLinkIcon, SearchIcon } from "lucide-react";
 
 import type { Route } from "./+types/search";
 import { PageBreadcrumbs } from "~/components/page-breadcrumbs";
+import { RouteErrorBoundary } from "~/components/route-error-boundary";
 import { EmptyState } from "~/components/states";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { safeExternalHref } from "~/lib/format";
 import { buildSearchHref, isSearchType } from "~/lib/search";
 import { getClientIp, searchRateLimiter } from "~/lib/rate-limit.server";
 import { buildMeta } from "~/lib/seo";
@@ -78,9 +80,13 @@ function ResultLink({ item }: { item: SearchResultItem }) {
   );
 
   if (item.external) {
+    const href = safeExternalHref(item.url);
+    if (!href) {
+      return <span className={className}>{body}</span>;
+    }
     return (
       <a
-        href={item.url}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
         className={className}
@@ -271,5 +277,16 @@ export default function Search({ loaderData }: Route.ComponentProps) {
         )}
       </div>
     </div>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <RouteErrorBoundary
+      title="Could not run your search"
+      description="Something went wrong while searching. Please try again in a moment."
+      actionLabel="Back to search"
+      actionTo="/search"
+    />
   );
 }

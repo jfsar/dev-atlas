@@ -310,6 +310,21 @@ async function seedRoadmaps() {
     });
     const topicIdBySlug = new Map(topicRows.map((t) => [t.slug, t.id]));
 
+    const relatedSlugs = roadmap.relatedTopics
+      ? roadmap.relatedTopics
+      : (
+          await prisma.topic.findMany({
+            where: {
+              status: "PUBLISHED",
+              slug: { notIn: topicSlugs },
+              relatedFrom: { some: { slug: { in: topicSlugs } } },
+            },
+            select: { slug: true },
+            orderBy: { title: "asc" },
+            take: 6,
+          })
+        ).map((topic) => topic.slug);
+
     const nodeIdByKey = new Map<string, string>();
     for (const [index, node] of roadmap.nodes.entries()) {
       const position = layout.get(node.key) ?? { x: 80, y: 60 };
@@ -373,6 +388,9 @@ async function seedRoadmaps() {
           create: roadmap.categories.map((slug) => ({
             category: { connect: { slug } },
           })),
+        },
+        relatedTopics: {
+          set: relatedSlugs.map((slug) => ({ slug })),
         },
       },
     });

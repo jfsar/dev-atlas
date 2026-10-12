@@ -165,6 +165,8 @@ export interface SeedRoadmap extends SeedSeo {
   order?: number;
   status: PublicationStatus;
   categories: string[];
+  /** Curated topic slugs shown as "related content" on the roadmap page. */
+  relatedTopics?: string[];
   sections: SeedSection[];
   nodes: SeedNode[];
   edges: SeedEdge[];

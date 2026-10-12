@@ -8,6 +8,7 @@ import {
 
 import type { Route } from "./+types/home";
 import { RoadmapCard } from "~/components/roadmap-card";
+import { RouteErrorBoundary } from "~/components/route-error-boundary";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -285,5 +286,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
     </>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <RouteErrorBoundary
+      title="Could not load the home page"
+      description="Something went wrong while loading this page. Please try again."
+      actionLabel="Browse roadmaps"
+      actionTo="/roadmaps"
+    />
   );
 }

@@ -4,6 +4,7 @@ import { MapIcon } from "lucide-react";
 import type { Route } from "./+types/roadmaps";
 import { CategoryFilter } from "~/components/category-filter";
 import { RoadmapCard } from "~/components/roadmap-card";
+import { RouteErrorBoundary } from "~/components/route-error-boundary";
 import { EmptyState } from "~/components/states";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -101,5 +102,16 @@ export default function RoadmapsIndex({ loaderData }: Route.ComponentProps) {
         </p>
       ) : null}
     </div>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <RouteErrorBoundary
+      title="Could not load roadmaps"
+      description="Something went wrong while loading roadmaps. Please try again."
+      actionLabel="Retry"
+      actionTo="/roadmaps"
+    />
   );
 }

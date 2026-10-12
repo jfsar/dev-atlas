@@ -17,6 +17,17 @@ describe("createRoadmapSchema", () => {
     expect(result.featured).toBe(false);
     expect(result.order).toBe(0);
     expect(result.categorySlugs).toEqual([]);
+    expect(result.relatedTopicSlugs).toEqual([]);
+  });
+
+  it("dedupes related topic slugs", () => {
+    const result = createRoadmapSchema.parse({
+      slug: "frontend",
+      title: "Frontend Developer",
+      summary: "Learn the frontend development path.",
+      relatedTopicSlugs: ["react", "react", "node"],
+    });
+    expect(result.relatedTopicSlugs).toEqual(["react", "node"]);
   });
 
   it("rejects a short summary", () => {

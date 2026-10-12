@@ -28,7 +28,16 @@ export const roadmapInputSchema = z.object({
   icon: emojiSchema,
   featured: z.boolean().default(false),
   order: orderSchema.default(0),
-  categorySlugs: z.array(slugSchema).max(10).default([]).transform(uniqueStrings),
+  categorySlugs: z
+    .array(slugSchema)
+    .max(10)
+    .default([])
+    .transform(uniqueStrings),
+  relatedTopicSlugs: z
+    .array(slugSchema)
+    .max(20)
+    .default([])
+    .transform(uniqueStrings),
   ...seoSchema.shape,
 });
 

@@ -12,6 +12,7 @@ export const siteConfig = {
     "http://localhost:5173",
   locale: "en_US",
   twitter: "@devatlas",
+  ogImage: "/og-image.png",
 } as const;
 
 export interface NavItem {

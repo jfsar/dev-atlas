@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { Link, isRouteErrorResponse } from "react-router";
-import { ArrowRightIcon, ClockIcon } from "lucide-react";
+import { ClockIcon } from "lucide-react";
 
 import type { Route } from "./+types/roadmap-detail";
+import { EntityLinkList } from "~/components/entity-link-list";
 import { Markdown } from "~/components/markdown";
 import { RoadmapGraph } from "~/components/roadmap-graph";
 import { RoadmapOutline } from "~/components/roadmap-outline";
@@ -17,7 +18,6 @@ import {
 } from "~/components/ui/breadcrumb";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { CardDescription, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { formatDifficulty, formatHours, pluralize } from "~/lib/format";
 import {
@@ -112,6 +112,29 @@ export default function RoadmapDetail({ loaderData }: Route.ComponentProps) {
   const duration = formatHours(roadmap.estimatedHours);
   const topicCount = countTopicNodes(nodes);
   const relationshipTypes = new Set(edges.map((edge) => edge.relationship));
+
+  const relatedTopics = roadmap.related.topics.map((topic) => ({
+    to: `/topics/${topic.slug}`,
+    title: topic.title,
+    summary: topic.summary,
+    meta: formatDifficulty(topic.difficulty) ?? undefined,
+  }));
+  const relatedProjects = roadmap.related.projects.map((project) => ({
+    to: `/projects/${project.slug}`,
+    title: project.title,
+    summary: project.summary,
+    meta: [
+      formatDifficulty(project.difficulty),
+      formatHours(project.estimatedHours),
+    ]
+      .filter(Boolean)
+      .join(" · "),
+  }));
+  const relatedDomains = roadmap.related.domains.map((domain) => ({
+    to: `/business-domains/${domain.slug}`,
+    title: domain.title,
+    summary: domain.summary,
+  }));
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -277,8 +300,9 @@ export default function RoadmapDetail({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {(roadmap.related.projects.length > 0 ||
-        roadmap.related.domains.length > 0) && (
+      {(relatedTopics.length > 0 ||
+        relatedProjects.length > 0 ||
+        relatedDomains.length > 0) && (
         <section aria-labelledby="related-heading" className="mt-12">
           <h2
             id="related-heading"
@@ -286,66 +310,41 @@ export default function RoadmapDetail({ loaderData }: Route.ComponentProps) {
           >
             Related content
           </h2>
-          <div className="mt-5 grid gap-8 lg:grid-cols-2">
-            {roadmap.related.projects.length > 0 ? (
+          <div className="mt-5 space-y-8">
+            {relatedTopics.length > 0 ? (
               <div>
                 <h3 className="font-heading text-lg font-medium">
-                  Projects to practice
+                  Related topics
                 </h3>
-                <ul className="mt-3 space-y-3">
-                  {roadmap.related.projects.map((project) => (
-                    <li key={project.slug}>
-                      <Link
-                        to={`/projects/${project.slug}`}
-                        className="group flex items-center justify-between gap-3 rounded-lg border bg-card p-3 transition-colors hover:border-foreground/20"
-                      >
-                        <span className="min-w-0">
-                          <CardTitle className="text-sm group-hover:underline">
-                            {project.title}
-                          </CardTitle>
-                          <CardDescription className="mt-0.5 line-clamp-2">
-                            {project.summary}
-                          </CardDescription>
-                        </span>
-                        <ArrowRightIcon
-                          className="size-4 shrink-0 text-muted-foreground"
-                          aria-hidden
-                        />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <div className="mt-3">
+                  <EntityLinkList items={relatedTopics} />
+                </div>
               </div>
             ) : null}
 
-            {roadmap.related.domains.length > 0 ? (
-              <div>
-                <h3 className="font-heading text-lg font-medium">
-                  Business domains
-                </h3>
-                <ul className="mt-3 space-y-3">
-                  {roadmap.related.domains.map((domain) => (
-                    <li key={domain.slug}>
-                      <Link
-                        to={`/business-domains/${domain.slug}`}
-                        className="group flex items-center justify-between gap-3 rounded-lg border bg-card p-3 transition-colors hover:border-foreground/20"
-                      >
-                        <span className="min-w-0">
-                          <CardTitle className="text-sm group-hover:underline">
-                            {domain.title}
-                          </CardTitle>
-                          <CardDescription className="mt-0.5 line-clamp-2">
-                            {domain.summary}
-                          </CardDescription>
-                        </span>
-                        <ArrowRightIcon
-                          className="size-4 shrink-0 text-muted-foreground"
-                          aria-hidden
-                        />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+            {relatedProjects.length > 0 || relatedDomains.length > 0 ? (
+              <div className="grid gap-8 lg:grid-cols-2">
+                {relatedProjects.length > 0 ? (
+                  <div>
+                    <h3 className="font-heading text-lg font-medium">
+                      Projects to practice
+                    </h3>
+                    <div className="mt-3">
+                      <EntityLinkList items={relatedProjects} />
+                    </div>
+                  </div>
+                ) : null}
+
+                {relatedDomains.length > 0 ? (
+                  <div>
+                    <h3 className="font-heading text-lg font-medium">
+                      Business domains
+                    </h3>
+                    <div className="mt-3">
+                      <EntityLinkList items={relatedDomains} />
+                    </div>
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </div>
