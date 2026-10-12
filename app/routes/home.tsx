@@ -226,7 +226,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       >
         <dl className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-6 px-4 py-12 sm:grid-cols-4">
           {statItems.map((stat) => (
-            <div key={stat.label}>
+            <div key={stat.label} className="text-center">
               <dt className="text-xs tracking-[0.14em] text-muted-foreground uppercase">
                 {stat.label}
               </dt>
